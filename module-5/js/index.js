@@ -2,60 +2,64 @@
 
 // Конструктор Notepad при инициализации принимает массив заметок
 const Notepad = function Notepad(notes = []) {
-  (this.getNotes = function() {
-    return notes;
-  }),
-    (this.findNoteById = function(id) {
-      for (const note of notes) {
-        if (note.id === id) return note;
+  this.notes = notes;
+this.getNotes = function () {
+    return this.notes;
+  },
+  this.findNoteById = function (id) {
+    for (const note of this.notes) {
+      if (note.id === id) return note;
+    }
+  },
+  this.saveNote = function (note) {
+    this.notes.push(note);
+  },
+  this.deleteNote = function (id) {
+    for (let i = 0; i < notes.length; i += 1) {
+      const note = this.notes[i];
+      if (note.id === id) {
+        this.notes.splice(i, 1);
+        return;
       }
-    }),
-    (this.saveNote = function(note) {
-      notes.push(note);
-    }),
-    (this.deleteNote = function(id) {
-      for (let i = 0; i < notes.length; i += 1) {
-        const note = notes[i];
-        if (note.id === id) {
-          notes.splice(i, 1);
-          return;
-        }
-      }
-    }),
-    (this.updateNoteContent = function(id, { field, value }) {
-      const note = this.findNoteById(id);
-      if (!note) return;
-      note[field] = value;
-    }),
-    (this.updateNotePriority = function(id, priority) {
-      const note = this.findNoteById(id);
-      if (!note) return;
-      note.priority = priority;
-    }),
-    (this.filterNotesByQuery = function(query = "") {
-      const foundNotes = [];
+    }
+  },
+  this.updateNoteContent = function (id, {
+    field,
+    value
+  }) {
+    const note = this.findNoteById(id);
+    if (!note) return;
+    note[field] = value;
+  },
+  this.updateNotePriority = function (id, priority) {
+    const note = this.findNoteById(id);
+    if (!note) return;
+    note.priority = priority;
+  },
+  this.filterNotesByQuery = function (query = "") {
+    const foundNotes = [];
 
-      for (const note of notes) {
-        const noteContent = `${note.body} ${note.title}`;
+    for (const note of this.notes) {
+      const noteContent = `${note.body} ${note.title}`;
 
-        const notePresent = noteContent
-          .toLowerCase()
-          .includes(query.toLowerCase());
-        if (notePresent) {
-          foundNotes.push(note);
-        }
+      const notePresent = noteContent
+        .toLowerCase()
+        .includes(query.toLowerCase());
+      if (notePresent) {
+        foundNotes.push(note);
       }
-      return foundNotes;
-    }),
-    (this.filterNotesByPriority = function(priority) {
-      const notesFiltered = [];
-      for (const note of notes) {
-        if (note.priority === priority) {
-          notesFiltered.push(note);
-        }
+    }
+    return foundNotes;
+  },
+  this.filterNotesByPriority = function (priority) {
+    const notesFiltered = [];
+    for (const note of this.notes) {
+      if (note.priority === priority) {
+        notesFiltered.push(note);
       }
-      return notesFiltered;
-    });
+    }
+    return notesFiltered;
+  };
 };
 
 /*
@@ -72,9 +76,21 @@ const PRIORITY_TYPES = {
 };
 
 Notepad.PRIORITIES = {
-  0: { id: 0, value: 0, name: "Low" },
-  1: { id: 1, value: 1, name: "Normal" },
-  2: { id: 2, value: 2, name: "High" }
+  0: {
+    id: 0,
+    value: 0,
+    name: "Low"
+  },
+  1: {
+    id: 1,
+    value: 1,
+    name: "Normal"
+  },
+  2: {
+    id: 2,
+    value: 2,
+    name: "High"
+  }
 };
 // Добавьте статический метод Notepad.getPriorityName(priorityId), который получает идентификатор приоритета и возвращает значение поля name из карты приоритетов.
 
@@ -82,19 +98,16 @@ Notepad.getPriorityName = function getPriorityName(priorityId) {
   return Notepad.PRIORITIES[priorityId].name;
 };
 
-const initialNotes = [
-  {
+const initialNotes = [{
     id: 1,
     title: "JavaScript essentials",
-    body:
-      "Get comfortable with all basic JavaScript concepts: variables, loops, arrays, branching, objects, functions, scopes, prototypes etc",
+    body: "Get comfortable with all basic JavaScript concepts: variables, loops, arrays, branching, objects, functions, scopes, prototypes etc",
     priority: PRIORITY_TYPES.HIGH
   },
   {
     id: 2,
     title: "Refresh HTML and CSS",
-    body:
-      "Need to refresh HTML and CSS concepts, after learning some JavaScript. Maybe get to know CSS Grid and PostCSS, they seem to be trending.",
+    body: "Need to refresh HTML and CSS concepts, after learning some JavaScript. Maybe get to know CSS Grid and PostCSS, they seem to be trending.",
     priority: PRIORITY_TYPES.NORMAL
   }
 ];
@@ -119,16 +132,14 @@ console.log("Все текущие заметки: ", notepad.getNotes());
 notepad.saveNote({
   id: 3,
   title: "Get comfy with Frontend frameworks",
-  body:
-    "First must get some general knowledge about frameworks, then maybe try each one for a week or so. Need to choose between React, Vue and Angular, by reading articles and watching videos.",
+  body: "First must get some general knowledge about frameworks, then maybe try each one for a week or so. Need to choose between React, Vue and Angular, by reading articles and watching videos.",
   priority: PRIORITY_TYPES.NORMAL
 });
 
 notepad.saveNote({
   id: 4,
   title: "Winter clothes",
-  body:
-    "Winter is coming! Need some really warm clothes: shoes, sweater, hat, jacket, scarf etc. Maybe should get a set of sportwear as well so I'll be able to do some excercises in the park.",
+  body: "Winter is coming! Need some really warm clothes: shoes, sweater, hat, jacket, scarf etc. Maybe should get a set of sportwear as well so I'll be able to do some excercises in the park.",
   priority: PRIORITY_TYPES.LOW
 });
 
