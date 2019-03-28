@@ -50,6 +50,14 @@ class Notepad {
   constructor(notes = []) {
     this._notes = notes;
   }
+  static generateUniqueId() {
+    return Math.random()
+      .toString(36)
+      .substring(2, 15) +
+      Math.random()
+      .toString(36)
+      .substring(2, 15);
+  }
 
   get notes() {
     return this._notes
@@ -60,18 +68,29 @@ class Notepad {
       if (note.id === id) return note;
     }
   }
-  saveNote(note) {
-    this._notes.push(note);
+
+  saveNote(title, body) {
+    const newNote = {
+      id: Notepad.generateUniqueId(),
+      title: title,
+      body: body,
+      priority: 0,
+    }
+    this._notes.push(newNote);
+    console.log(newNote)
+    return newNote;
   }
 
   deleteNote(id) {
-    for (let i = 0; i < this._notes.length; i += 1) {
-      const note = this._notes[i];
-      if (note.id === id) {
-        this._notes.splice(i, 1);
-        return;
-      }
-    }
+    this._notes = this._notes.filter(item => item.id !== id);
+    console.log(this._notes)
+    /*  for (let i = 0; i < this._notes.length; i += 1) {
+        const note = this._notes[i];
+        if (note.id === id) {
+          this._notes.splice(i, 1);
+          return;
+        }
+      }*/
   }
   updateNoteContent(id, {
     field,
@@ -89,10 +108,8 @@ class Notepad {
 
   filterNotesByQuery(query = "") {
     const foundNotes = [];
-
     for (const note of this._notes) {
       const noteContent = `${note.body} ${note.title}`;
-
       const notePresent = noteContent
         .toLowerCase()
         .includes(query.toLowerCase());
@@ -102,6 +119,7 @@ class Notepad {
     }
     return foundNotes;
   }
+
   filterNotesByPriority(priority) {
     const notesFiltered = [];
     for (const note of this._notes) {
@@ -115,17 +133,25 @@ class Notepad {
   static getPriorityName(priorityId) {
     return Notepad.PRIORITIES[priorityId].name;
   }
-
 }
+
+const notepad = new Notepad(initialNotes);
+
+const refs = {
+  noteList: document.querySelector('.note-list'),
+  editor: document.querySelector('.note-editor'),
+  editorInput: document.querySelector('.note-editor__input'),
+  search: document.querySelector('.search-form__input')
+};
 
 const createNoteItem = ({
   id,
   title,
-  body
+  body,
 }) => {
   const content = createNoteContent({
     title,
-    body
+    body,
   });
   const footer = createNoteFooter();
   const noteListItem = document.createElement('li');
@@ -135,9 +161,9 @@ const createNoteItem = ({
   noteStr.classList.add('note');
   noteStr.append(content, footer)
   noteListItem.append(noteStr)
-
   return noteListItem;
 }
+
 const createNoteContent = ({
   title,
   body
@@ -213,7 +239,67 @@ const createNoteFooter = (note) => {
   return noteFooter;
 }
 
-const notepad = new Notepad(initialNotes);
-const noteList = document.querySelector('.note-list');
-const listItemsCreated = notepad.notes.map(item => createNoteItem(item));
-noteList.append(...listItemsCreated);
+const renderNoteItems = (listRef, note) => {
+  const listItemsCreated = note.map(item => createNoteItem(item));
+  listRef.innerHTML = '';
+  listRef.append(...listItemsCreated);
+}
+
+const addItemToList = (listRef, note) => {
+  const noteItem = createNoteItem(note);
+  listRef.appendChild(noteItem);
+}
+
+//Handlers
+
+const handleEditorSubmit = event => {
+  event.preventDefault();
+  const [title, body] = event.currentTarget.elements;
+  const titleValue = title.value.trim();
+  const bodyValue = body.value.trim();
+
+  if (bodyValue === "" || titleValue === "") {
+    return alert('Необходимо заполнить все поля!');
+  }
+
+  const savedNote = notepad.saveNote(titleValue, bodyValue)
+  addItemToList(refs.noteList, savedNote);
+  event.currentTarget.reset();
+}
+const handleFilterChange = event => {
+  console.log(event.target.value);
+
+  const filteredItems = notepad.filterNotesByQuery(event.target.value);
+  console.table(filteredItems)
+  renderNoteItems(refs.noteList, filteredItems);
+};
+
+
+const removeNoteItem = noteElement => {
+  const parentNoteItem = noteElement.closest('.note-list__item');
+  console.log(parentNoteItem)
+  const id = parentNoteItem.dataset.id;
+
+  notepad.deleteNote(id);
+  parentNoteItem.remove();
+};
+
+const handleListClick = ({
+  target
+}) => {
+  if (target.nodeName !== 'I') return;
+  const action = target.closest('button').dataset.action;
+  switch (action) {
+    case NOTE_ACTIONS.DELETE:
+      removeNoteItem(target);
+      break;
+    default:
+      console.log('invalid action!');
+  }
+};
+
+renderNoteItems(refs.noteList, initialNotes);
+
+refs.editor.addEventListener('submit', handleEditorSubmit)
+refs.search.addEventListener('input', handleFilterChange);
+refs.noteList.addEventListener('click', handleListClick);
