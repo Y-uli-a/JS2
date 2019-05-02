@@ -6,6 +6,7 @@ const PRIORITY_TYPES = {
   HIGH: 2,
 };
 
+
 const ICON_TYPES = {
   EDIT: 'edit',
   DELETE: 'delete',
@@ -118,6 +119,25 @@ class Notepad {
 
 }
 
+Notepad.PRIORITIES = {
+  0: {
+    id: 0,
+    value: 0,
+    name: "Low"
+  },
+  1: {
+    id: 1,
+    value: 1,
+    name: "Normal"
+  },
+  2: {
+    id: 2,
+    value: 2,
+    name: "High"
+  }
+};
+const notepad = new Notepad(initialNotes);
+
 const createNoteItem = ({
   id,
   title,
@@ -182,6 +202,7 @@ const createNoteFooter = (note) => {
 
   const notePriority = document.createElement('span');
   notePriority.classList.add('note__priority');
+  notePriority.textContent = Notepad.getPriorityName(note.priority);
 
   const secondNoteSection = document.createElement('section');
   secondNoteSection.classList.add('note__section');
@@ -213,7 +234,6 @@ const createNoteFooter = (note) => {
   return noteFooter;
 }
 
-const notepad = new Notepad(initialNotes);
 const noteList = document.querySelector('.note-list');
 const listItemsCreated = notepad.notes.map(item => createNoteItem(item));
 noteList.append(...listItemsCreated);
