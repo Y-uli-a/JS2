@@ -141,13 +141,14 @@ const notepad = new Notepad(initialNotes);
 const createNoteItem = ({
   id,
   title,
-  body
+  body,
+  priority,
 }) => {
   const content = createNoteContent({
     title,
     body
   });
-  const footer = createNoteFooter();
+  const footer = createNoteFooter(priority);
   const noteListItem = document.createElement('li');
   noteListItem.classList.add('note-list__item');
   noteListItem.dataset.id = id;
@@ -177,7 +178,7 @@ const createNoteContent = ({
   return noteContent;
 }
 
-const createNoteFooter = (note) => {
+const createNoteFooter = (priority) => {
   const noteFooter = document.createElement('footer');
   noteFooter.classList.add('note__footer');
 
@@ -202,7 +203,7 @@ const createNoteFooter = (note) => {
 
   const notePriority = document.createElement('span');
   notePriority.classList.add('note__priority');
-  notePriority.textContent = Notepad.getPriorityName(note.priority);
+  notePriority.textContent = Notepad.getPriorityName(priority);
 
   const secondNoteSection = document.createElement('section');
   secondNoteSection.classList.add('note__section');
@@ -225,7 +226,7 @@ const createNoteFooter = (note) => {
 
   decreasePriorityButton.appendChild(decreaseIcon);
   increasePriorityButton.appendChild(increaseIcon);
-  firstNoteSection.append(decreasePriorityButton, increasePriorityButton);
+  firstNoteSection.append(decreasePriorityButton, increasePriorityButton, notePriority);
 
   editNoteButton.appendChild(editIcon);
   deleteNoteButton.appendChild(deleteIcon);
