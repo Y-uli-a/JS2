@@ -1,5 +1,6 @@
 const path = require('path');
 const webpackMerge = require('webpack-merge');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const WebpackBar = require('webpackbar');
@@ -44,7 +45,11 @@ module.exports = ({ mode = 'production' }) =>
       plugins: [
         new CleanWebpackPlugin('dist'),
         new FriendlyErrorsWebpackPlugin(),
-        new WebpackBar()
+        new WebpackBar(),
+       /* new HtmlWebpackPlugin({
+        template: './index.html',
+        filename: 'index.html',
+        })*/
       ]
     },
     modeConfig(mode)

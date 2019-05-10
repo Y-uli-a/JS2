@@ -33,5 +33,12 @@
     "webpack-dev-server": "^3.3.1",
     "webpack-merge": "^4.2.1",
     "webpackbar": "^3.2.0"
+  },
+  "dependencies": {
+    "shortid": "^2.2.14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "\u0016https://github.com/Y-uli-a/JS2.git"
   }
 }
