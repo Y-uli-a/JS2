@@ -1,4 +1,4 @@
-import './shortid'
+
 export default class Notepad {
     constructor(notes = []) {
     this._notes = notes;
@@ -23,13 +23,11 @@ export default class Notepad {
       priority: 0,
     }
     this._notes.push(newNote);
-    console.log(newNote)
     return newNote;
   }
 
   deleteNote(id) {
     this._notes = this._notes.filter(item => item.id !== id);
-    console.log(this._notes)
     /*  for (let i = 0; i < this._notes.length; i += 1) {
         const note = this._notes[i];
         if (note.id === id) {
